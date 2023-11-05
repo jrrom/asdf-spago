@@ -15,10 +15,8 @@
 
 # Dependencies
 
-**TODO: adapt this section**
-
 - `bash`, `curl`, `tar`: generic POSIX utilities.
-- `SOME_ENV_VAR`: set this environment variable in your shell config to load the correct version of tool x.
+- `node` and `purs`
 
 # Install
 
@@ -54,6 +52,12 @@ install & manage versions.
 Contributions of any kind welcome! See the [contributing guide](contributing.md).
 
 [Thanks goes to these contributors](https://github.com/jrrom/asdf-spago/graphs/contributors)!
+
+# Thanks
+
+Special thanks to [asdf](https://github.com/asdf-vm/asdf)
+
+[nsaunders](https://github.com/nsaunders/asdf-spago) (Now archived)
 
 # License
 

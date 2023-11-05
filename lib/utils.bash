@@ -2,7 +2,6 @@
 
 set -euo pipefail
 
-# TODO: Ensure this is the correct GitHub homepage where releases can be downloaded for spago.
 GH_REPO="https://github.com/purescript/spago"
 TOOL_NAME="spago"
 TOOL_TEST="spago --help"
@@ -31,18 +30,42 @@ list_github_tags() {
 }
 
 list_all_versions() {
-	# TODO: Adapt this. By default we simply list the tag names from GitHub releases.
-	# Change this function if spago has other means of determining installable versions.
 	list_github_tags
 }
 
 download_release() {
-	local version filename url
+	local version filename bin url
 	version="$1"
 	filename="$2"
 
-	# TODO: Adapt the release URL convention for spago
-	url="$GH_REPO/archive/v${version}.tar.gz"
+
+	if [[ "$OSTYPE" == "linux-gnu"* ]]; then
+	  bin="linux"
+ 	elif [[ "$OSTYPE" == "darwin"* ]]; then
+  # spago release artifacts have changed names over time for macOS.
+  #
+  # - "osx.tar.gz" up to and including 0.17.0 (other than a few exceptions)
+  # - "macOS-latest.tar.gz" for 0.18.0
+  # - "macOS.tar.gz" for 0.18.1 onwards (up to 0.19.0 as of this writing)
+  #
+  # There are a few other outlier versions which might not be handled here, and the very
+  # early versions don't seem to contain an executable named "spago" so those don't work either.
+  #
+  # See https://github.com/purescript/spago/releases for release artifact filenames
+  	major_version=$(echo $version | cut -d'.' -f1)
+  	minor_version=$(echo $version | cut -d'.' -f2)
+  	if [[ "$version" == "0.18.0" ]]; then
+  	  bin="macOS-latest"
+  	elif (($major_version == 0 && $minor_version < 18)); then
+  	  bin="osx"
+  	else
+  	  bin="macOS"
+  	fi
+  else
+    fail "unrecognized operating system $OSTYPE"
+  fi
+
+  url="$GH_REPO/releases/download/${version}/${bin}.tar.gz"
 
 	echo "* Downloading $TOOL_NAME release $version..."
 	curl "${curl_opts[@]}" -o "$filename" -C - "$url" || fail "Could not download $url"
@@ -61,7 +84,6 @@ install_version() {
 		mkdir -p "$install_path"
 		cp -r "$ASDF_DOWNLOAD_PATH"/* "$install_path"
 
-		# TODO: Assert spago executable exists.
 		local tool_cmd
 		tool_cmd="$(echo "$TOOL_TEST" | cut -d' ' -f1)"
 		test -x "$install_path/$tool_cmd" || fail "Expected $install_path/$tool_cmd to be executable."
