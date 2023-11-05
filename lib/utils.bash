@@ -65,7 +65,7 @@ download_release() {
     fail "unrecognized operating system $OSTYPE"
   fi
 
-  url="$GH_REPO/releases/download/${version}/${bin}.tar.gz"
+  url="$GH_REPO/releases/download/v${version}/${bin}.tar.gz"
 
 	echo "* Downloading $TOOL_NAME release $version..."
 	curl "${curl_opts[@]}" -o "$filename" -C - "$url" || fail "Could not download $url"
