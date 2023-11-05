@@ -38,34 +38,33 @@ download_release() {
 	version="$1"
 	filename="$2"
 
-
 	if [[ "$OSTYPE" == "linux-gnu"* ]]; then
-	  bin="linux"
- 	elif [[ "$OSTYPE" == "darwin"* ]]; then
-  # spago release artifacts have changed names over time for macOS.
-  #
-  # - "osx.tar.gz" up to and including 0.17.0 (other than a few exceptions)
-  # - "macOS-latest.tar.gz" for 0.18.0
-  # - "macOS.tar.gz" for 0.18.1 onwards (up to 0.19.0 as of this writing)
-  #
-  # There are a few other outlier versions which might not be handled here, and the very
-  # early versions don't seem to contain an executable named "spago" so those don't work either.
-  #
-  # See https://github.com/purescript/spago/releases for release artifact filenames
-  	major_version=$(echo $version | cut -d'.' -f1)
-  	minor_version=$(echo $version | cut -d'.' -f2)
-  	if [[ "$version" == "0.18.0" ]]; then
-  	  bin="macOS-latest"
-  	elif (($major_version == 0 && $minor_version < 18)); then
-  	  bin="osx"
-  	else
-  	  bin="macOS"
-  	fi
-  else
-    fail "unrecognized operating system $OSTYPE"
-  fi
+		bin="linux"
+	elif [[ "$OSTYPE" == "darwin"* ]]; then
+		# spago release artifacts have changed names over time for macOS.
+		#
+		# - "osx.tar.gz" up to and including 0.17.0 (other than a few exceptions)
+		# - "macOS-latest.tar.gz" for 0.18.0
+		# - "macOS.tar.gz" for 0.18.1 onwards (up to 0.19.0 as of this writing)
+		#
+		# There are a few other outlier versions which might not be handled here, and the very
+		# early versions don't seem to contain an executable named "spago" so those don't work either.
+		#
+		# See https://github.com/purescript/spago/releases for release artifact filenames
+		major_version=$(echo "$version" | cut -d'.' -f1)
+		minor_version=$(echo "$version" | cut -d'.' -f2)
+		if [[ "$version" == "0.18.0" ]]; then
+			bin="macOS-latest"
+		elif (("$major_version" == 0 && "$minor_version" < 18)); then
+			bin="osx"
+		else
+			bin="macOS"
+		fi
+	else
+		fail "unrecognized operating system $OSTYPE"
+	fi
 
-  url="$GH_REPO/releases/download/${version}/${bin}.tar.gz"
+	url="$GH_REPO/releases/download/${version}/${bin}.tar.gz"
 
 	echo "* Downloading $TOOL_NAME release $version..."
 	curl "${curl_opts[@]}" -o "$filename" -C - "$url" || fail "Could not download $url"
