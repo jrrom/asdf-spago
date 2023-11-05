@@ -23,8 +23,6 @@
 Plugin:
 
 ```shell
-asdf plugin add spago
-# or
 asdf plugin add spago https://github.com/jrrom/asdf-spago.git
 ```
 
